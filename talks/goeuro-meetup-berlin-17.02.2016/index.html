@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Better then isomorphic JS.</title>
+
+		<meta name="description" content="Talk about building and running an static app.">
+		<meta name="author" content="Vsevolod Dolgopolov">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+<link rel="stylesheet" media="print" href="reveal.js/css/print/pdf.css" />
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section>
+<h1>Better then isomorphic JS.</h1> <h3>GoEuro Meetup</h3>
+<p>
+<small>Seva Dolgopolov <a href="http://twitter.com/seva_dolgopolov">@seva_dolgopolov</a></small>
+</p>
+</section>
+<section>
+<h2>Who i am</h2>
+<p>
+<ul>
+<li>Freelance Backend Developer</li>
+<li>DevOp and Frontenv Dev in my freetime</li>
+</ul>
+</p>
+</section>
+<section>
+<em>“Isomorphic JavaScript” might be used to describe JavaScript code that “can execute both on the client and the server”</em>
+<br/>
+<b>by Charlie Robbins</b>
+</section>
+<section data-background="#FFFFFF">
+<h2>searching for isomorphic/universal JavaScript</h2>
+<script type="text/javascript" src="//www.google.com/trends/embed.js?hl=en-US&q=universal+javascript,+isomorphic+javascript&cmpt=q&tz=Etc/GMT-1&tz=Etc/GMT-1&content=1&cid=TIMESERIES_GRAPH_0&export=5&w=600&h=630"></script>
+</section>
+<section>
+<h2>Why?</h2>
+<ul>
+<li><p class="fragment">It is perfomant</p></li>
+<li><p class="fragment">Search engine indexable</p></li>
+<li><p class="fragment">Free progressive enhancements</p></li>
+<li><p class="fragment">Fallback by design</p></li>
+</ul>
+</section>
+<section data-background="#FFFFFF">
+<h2>How?</h2>
+<div style="margin: auto 130px;">
+<img style="float:left" src="screenshots/isomorphic_lib1.png"/>
+<img style="float:left" src="screenshots/isomorphic_lib2.png"/>
+<img style="float:left" src="screenshots/isomorphic_lib3.png"/>
+<img style="float:left" src="screenshots/isomorphic_lib4.png"/>
+</p>
+</section>
+<section>
+<h2>The basic idea is the same.</h2>
+<img src="screenshots/runtime_abstraction.png"/>
+</section>
+<section>
+<h2>how much does it cost?</h2>
+</section>
+<section data-markdown>
+  <script type="text/template">
+### client routing
+ships the whole content again within js.
+ ```
+s["default"]
+  .createElement("p",null,"This starter boilerplate app uses the following technologies:"),
+s["default"]
+  .createElement("ul",null,s["default"]
+    .createElement("li",null,s["default"]
+      .createElement("del",null,"Isomorphic")
+```
+  </script>
+</section>
+<section>
+<h2>"Universal" is not able to scale</h2>
+<p class="fragment">if you are a content driven project</p>
+</section>
+<section>
+ <h2>utilizing a unidirectional data flow on client side</h2>
+  <img src="https://facebook.github.io/flux/img/flux-simple-f8-diagram-with-client-action-1300w.png"/>
+</section>
+<section data-markdown>
+ <script type="text/template"> 
+ ### you need to expose some state that doesn't look like native html
+```
+<script charset="UTF-8" data-reactid=".1vo1mrdurk.1.1">window.__data={"router":{"routes":...}}&lt;/script>
+```
+**from react-redux-universal-hot-example**
+
+or 
+```
+<div class="___iso-state___" data-key="_0" data-meta="{}" data-state={}></div>
+```
+**from isomorphic.iam4x.fr**
+ </script>
+</section>
+<section>
+<h2>"Universal" will drive any Search Engine crawler crazy</h2>
+<p class="fragment">because they need at least a general symantic</p>
+</section>
+<section>
+  <h2>inline style</h2>
+  <img src="screenshots/inline_style.png"/>
+  <p class="fragment"> you definetely don't want to send it within HTML file</p>
+</section>
+<section>
+  <h2>"Universal" motivates to use a separate file/request</h2>
+  <p>
+    <ul>
+      <li>it will be automatically cached by browser</li>
+      <li>HTML response body itself is much smaller</li>
+   </ul>
+  </p>
+</section>
+<section data-background="#FFFFFF">
+<h2>Fazit</h2>
+<p class="fragment" style="color:red">- bloat up a client js with non functional artifacts</p>
+<p class="fragment" style="color:red">- state is leaking in a markup</p>
+<p class="fragment">but</p>
+<p class="fragment" style="color:green">- encourage separation between representation rules and markup itself</p>
+<p class="fragment" style="color:green">- enables lean runtime environment</p>
+</section>
+<section>
+<h2>what if?</h2>
+</section>
+
+
+<section data-markdown>
+  <script type="text/template">
+###1. get rid of client routing
+
+then we can simply build a html tree 
+
+```
+ ./public/
+    |-- index.html
+    |-- about/index.html
+    |-- blog/post1/index.html
+    |-- blog/post2/index.html
+```
+
+</script>
+</section>
+
+<section data-markdown>
+ <script type="text/template">
+ 
+### 2. get rid of any server side customizable initial state.
+and delegete it all to client
+ 
+``` 
+// webpack.config.js
+module.exports = {
+ entry: {
+
+ server: __dirname + '/src/server.js',
+ client: __dirname + '/src/client.js'
+
+},
+...
+```
+
+</script>
+</section>
+<section data-markdown>
+  <script type="text/template">
+  ### 3. Use React's JSX  as a single application template engine
+```
+// About.jsx
+...
+render() {
+ return (
+  <html lang={locale}>
+   <Head {...headData}/> 
+   <Body {...bodyData}/>
+  </html>)
+}
+...
+```
+</script>
+</section>
+
+
+<section style="text-align:left">
+<h3 style="text-align:center">4. Separate content from representaion logic </h3>
+<p class="fragment"><em>try to write your content just in markdown</em></p>  
+<p class="fragment">
+ ---
+<br/>
+   title: Yaml Header
+<br/>
+  ---
+<br/>
+  # Markdown body!
+</p>
+<p class="fragment" style="text-align:left">use:
+<br/>
+- yaml-markdown-loader
+<br/>
+- or markdown-with-front-matter-loader
+</p>
+</section>
+
+<section data-background="#FFFFFF">
+<h2>Fazit, again please</h2>
+<p class="fragment" style="color:green; text-align:left">- no bloated client js with non functional artifacts</p>
+<p class="fragment" style="color:green; text-align:left">- no state is leaking in a markup</p>
+<p class="fragment" style="color:green; text-align:left">- separation between representation rules and markup and content</p>
+<p class="fragment" style="color:green; text-align:left">- html based runtime environment</p>
+</section>
+
+<section data-background="#FFFFFF">
+<h2>Build an html based runtime environment</h2>
+<p class="fragment"><img src="screenshots/nginx.png"/></p>
+
+</section>
+
+<section data-background="#FFFFFF">
+<h2>Build it with docker</h2>
+<p class="fragment"><img src="screenshots/docker.png"/></p>
+
+</section>
+<section>
+
+
+<h2>or just try Static over Universal</h2>
+
+<p> demo project: <a href="https://github.com/startup-boilerplate/homepage">github.com/startup-boilerplate/homepage</a> 
+</section>
+
+ 
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
